@@ -1,0 +1,42 @@
+version: '3'
+
+volumes:
+  pg_data_kitty_production:
+  static_kitty_production:
+  media_kitty_production:
+
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - pg_data_kitty_production:/var/lib/postgresql/data
+
+  backend:
+    image: bem6u/kittygram_backend
+    env_file: .env
+    volumes:
+      - static_kitty_production:/backend_static/
+      - media_kitty_production:/app/media
+    depends_on:
+      - db
+
+  frontend:
+    image: bem6u/kittygram_frontend
+    env_file: .env
+    command: cp -r /app/build/. /static/
+    volumes:
+      - static_kitty_production:/static
+
+  gateway:
+    image: bem6u/kittygram_gateway
+    env_file: .env
+    ports:
+      - 9000:80
+    volumes:
+      - static_kitty_production:/staticfiles/
+      - media_kitty_production:/app/media/
+
+    depends_on:
+      - backend
+      - frontend
