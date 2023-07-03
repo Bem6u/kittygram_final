@@ -14,7 +14,7 @@ services:
   backend:
     image: bem6u/kittygram_backend
     env_file: .env
-    entrypoint: /usr/bin/entrypoint.sh
+    #entrypoint: /usr/bin/entrypoint.sh
     depends_on:
       - db
     volumes:
