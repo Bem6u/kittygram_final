@@ -1,46 +1,36 @@
 version: '3'
 
 volumes:
-  pg_data_kitty_production:
-  static_kitty_production:
-  media_kitty_production:
+  pg_data:
+  static:
+  media:
 
 services:
   db:
     image: postgres:13.10
     env_file: .env
     volumes:
-      - pg_data_kitty_production:/var/lib/postgresql/data
-    restart: always
-
+      - pg_data:/var/lib/postgresql/data
   backend:
-    image: bem6u/kittygram_backend
+    image: mrshifty/kittygram_backend
     env_file: .env
-    volumes:
-      - static_kitty_production:/backend_static/
-      - media_kitty_production:/app/media
+    entrypoint: /usr/bin/entrypoint.sh
     depends_on:
       - db
-    restart: on-failure
-
+    volumes:
+      - static:/kittygram_backend_static/
+      - media:/app/media/
   frontend:
-    image: bem6u/kittygram_frontend
     env_file: .env
+    image: mrshifty/kittygram_frontend
     command: cp -r /app/build/. /static/
     volumes:
-      - static_kitty_production:/static
-    restart: no
-
+      - static:/static/
   gateway:
-    image: bem6u/kittygram_gateway
+    image: mrshifty/kittygram_gateway
     env_file: .env
     ports:
       - 9000:${PORT}
     volumes:
-      - static_kitty_production:/staticfiles/
-      - media_kitty_production:/app/media/
-
-    depends_on:
-      - backend
-      - frontend
-    restart: always
+      - static:/static/
+      - media:/app/media/

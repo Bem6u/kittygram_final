@@ -1,56 +1,33 @@
 version: '3'
 
 volumes:
-  pg_data_kity:
-  static_kitty:
-  media_kitty:
+  pg_data:
+  static:
+  media:
 
 services:
   db:
     image: postgres:13
     env_file: .env
     volumes:
-      - pg_data_kity:/var/lib/postgresql/data
-    restart: always
-
+      - pg_data:/var/lib/postgresql/data
   backend:
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
+    build: ./backend/
     env_file: .env
     volumes:
-      - static_kitty:/backend_static
-      - media_kitty:/app/media
-    depends_on:
-      - db
-    restart: on-failure
-
-
+      - static:/kittygram_backend_static/
+      - media:/app/media/
   frontend:
-    build:
-      context: ./frontend/.
-      dockerfile: Dockerfile
     env_file: .env
+    build: ./frontend/
     command: cp -r /app/build/. /static/
     volumes:
-      - static_kitty:/static
-    restart: no
-
-
+      - static:/static/
   gateway:
-    build:
-      context: ./nginx/
-      dockerfile: Dockerfile
+    build: ./nginx/
     env_file: .env
-    volumes:
-      - static_kitty:/staticfiles/
-      - media_kitty:/app/media/
     ports:
-      - 9000:${PORT}
-    depends_on:
-      - backend
-      - frontend
-    restart: always
-
-
-
+      - 9000:80
+    volumes:
+      - static:/static/
+      - media:/app/media/
