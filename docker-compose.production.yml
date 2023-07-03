@@ -11,21 +11,25 @@ services:
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+    restart: always
+
   backend:
     image: bem6u/kittygram_backend
     env_file: .env
-    #entrypoint: /usr/bin/entrypoint.sh
     depends_on:
       - db
     volumes:
       - static:/kittygram_backend_static/
       - media:/app/media/
+    restart: on-failure
+
   frontend:
     env_file: .env
     image: bem6u/kittygram_frontend
     command: cp -r /app/build/. /static/
     volumes:
       - static:/static/
+    restart: no
   gateway:
     image: bem6u/kittygram_gateway
     env_file: .env
@@ -34,3 +38,4 @@ services:
     volumes:
       - static:/static/
       - media:/app/media/
+    restart: always
