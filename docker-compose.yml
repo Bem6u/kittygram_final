@@ -11,6 +11,7 @@ services:
     env_file: .env
     volumes:
       - pg_data_kity:/var/lib/postgresql/data
+    restart: always
 
   backend:
     build:
@@ -22,6 +23,7 @@ services:
       - media_kitty:/app/media
     depends_on:
       - db
+    restart: on-failure
 
 
   frontend:
@@ -32,6 +34,7 @@ services:
     command: cp -r /app/build/. /static/
     volumes:
       - static_kitty:/static
+    restart: no
 
 
   gateway:
@@ -43,10 +46,11 @@ services:
       - static_kitty:/staticfiles/
       - media_kitty:/app/media/
     ports:
-      - 9000:80
+      - 9000:${PORT}
     depends_on:
       - backend
       - frontend
+    restart: always
 
 
 
