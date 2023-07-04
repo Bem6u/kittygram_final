@@ -34,7 +34,7 @@ services:
     image: bem6u/kittygram_gateway
     env_file: .env
     ports:
-      - 9000:80
+      - 9000:${PORT}
     volumes:
       - static:/static/
       - media:/app/media/
