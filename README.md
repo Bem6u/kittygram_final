@@ -15,15 +15,11 @@ cd kittygram_final
 ```
 - Запустите проект с помощью команды:
 ```
-docker compose up
+docker compose up -d
 ```
 - Соберите статику Django с помощью команды:
 ```
 docker compose exec backend python manage.py collectstatic
-```
-- Скопируйте статику командой:
-```
-docker compose exec backend cp -r /app/collected_static/. /static/static/
 ```
 - По адресу http://127.0.0.1:9000/ сайт будет доступен.
 
