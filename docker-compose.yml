@@ -11,23 +11,30 @@ services:
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+    restart: always
+    
   backend:
     build: ./backend/
     env_file: .env
     volumes:
       - static:/kittygram_backend_static/
       - media:/app/media/
+    restart: on-failure
+
   frontend:
     env_file: .env
     build: ./frontend/
     command: cp -r /app/build/. /static/
     volumes:
       - static:/static/
+    restart: no
+
   gateway:
     build: ./nginx/
     env_file: .env
     ports:
-      - 9000:80
+      - 9000:${PORT}
     volumes:
       - static:/static/
       - media:/app/media/
+    restart: always
